@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('status')->length(1);
             $table->unsignedBigInteger('supplier_id');
             $table->foreign('supplier_id')->references('id')->on('suppliers');
-            // $table->foreignId('supplier_id')->constrained();
             $table->timestamps();
         });
     }
