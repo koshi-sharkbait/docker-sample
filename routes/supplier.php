@@ -27,7 +27,7 @@ use App\Http\Controllers\Supplier\Auth\VerifyEmailController;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Supplier/Welcome', [
+    return Inertia::render('/Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
@@ -36,7 +36,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Supplier/Dashboard');
+    return view('dashboard');
 })->middleware(['auth:suppliers', 'verified'])->name('dashboard');
 
 Route::middleware('auth:suppliers')->group(function () {

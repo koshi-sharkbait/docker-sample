@@ -1,52 +1,51 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
+namespace App\Http\Controllers\Supplier\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Admin;
+use App\Models\Supplier;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class RegisteredUserController extends Controller
 {
     /**
      * Display the registration view.
+     *
+     * @return \Illuminate\View\View
      */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Admin/Auth/Register');
+        return view('supplier.auth.register');
     }
 
     /**
      * Handle an incoming registration request.
      *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:'.Admin::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => 'required|string|email|max:255|unique:suppliers',
+            'password' => 'required|string|confirmed|min:8',
         ]);
 
-        $user = Admin::create([
+        Auth::guard('suppliers')->login($user = Supplier::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ]);
+        ]));
 
         event(new Registered($user));
 
-        Auth::guard('admin')->login($user);
-
-        return redirect(RouteServiceProvider::ADMIN_HOME);
+        return redirect(RouteServiceProvider::SUPPLIER_HOME);
     }
 }

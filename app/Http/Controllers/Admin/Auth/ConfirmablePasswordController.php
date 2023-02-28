@@ -1,32 +1,35 @@
 <?php
 
-namespace App\Http\Controllers\Admin\Auth;
+namespace App\Http\Controllers\Supplier\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class ConfirmablePasswordController extends Controller
 {
     /**
      * Show the confirm password view.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View
      */
-    public function show(): Response
+    public function show(Request $request)
     {
-        return Inertia::render('Admin/Auth/ConfirmPassword');
+        return view('supplier.auth.confirm-password');
     }
 
     /**
      * Confirm the user's password.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return mixed
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        if (! Auth::guard('admin')->validate([
+        if (! Auth::guard('suppliers')->validate([
             'email' => $request->user()->email,
             'password' => $request->password,
         ])) {
@@ -37,6 +40,6 @@ class ConfirmablePasswordController extends Controller
 
         $request->session()->put('auth.password_confirmed_at', time());
 
-        return redirect()->intended(RouteServiceProvider::ADMIN_HOME);
+        return redirect()->intended(RouteServiceProvider::SUPPLIER_HOME);
     }
 }
